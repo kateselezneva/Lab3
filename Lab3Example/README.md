@@ -1,0 +1,511 @@
+## Отчет по лабораторной работе № 3
+
+#### № группы: `ПМ-2401`
+
+#### Выполнилa: `Селезнева Екатерина Михайловна`
+
+#### Вариант: `25`
+
+### Cодержание:
+
+- [Постановка задачи](#1-постановка-задачи)
+- [Входные и выходные данные](#2-входные-и-выходные-данные)
+- [Выбор структуры данных](#3-выбор-структуры-данных)
+- [Алгоритм](#4-алгоритм)
+- [Программа](#5-программа)
+- [Анализ правильности решения](#6-анализ-правильности-решения)
+
+### 1. Постановка задачи
+
+>1. Добавление блюда
+Добавляет блюдо с указанным названием и ценой. Если цена меньше или равна 0, добавление игнорируется. Если блюдо с таким названием уже существует,
+добавление также не выполняется.
+>2. Распечатка меню
+   Выводит полный список блюд в алфавитном порядке с их ценами.
+>3. Распечатка доступных блюд
+   Выводит список блюд и количества их порций, если их количество больше 0.
+>4. Приготовление порций блюда
+   Увеличивает количество порций указанного блюда на n, принимая номер блюда
+   из списка.
+>5. Изменение цены блюда
+   Изменяет цену указанного блюда по его номеру. Цена может только увеличиваться; попытки уменьшить цену или оставить её неизменной игнорируются.
+>6. Покупка одного блюда
+   Покупает одну порцию блюда по его номеру. Возвращает цену блюда или -1, если
+   блюда нет в наличии.
+>7. Покупка нескольких блюд
+   Покупает блюда по массиву номеров. Возвращает общую стоимость успешно проданных блюд. Если ни одно блюдо не удалось продать, возвращается -1.
+>8. Максимальное количество блюд по сумме
+   Возвращает наибольшее количество блюд, которое может купить человек на указанную сумму. Учитываются только доступные блюда.
+>9. Три самых дорогих блюда
+   Выводит три самых дорогих блюда и их цены. Если блюд меньше трёх, выводит
+   все доступные.
+>10. Три самых дешёвых блюда
+    Выводит три самых дешёвых блюда из тех, что есть в наличии, и их цены. Если
+    блюд меньше трёх, выводит все доступные.
+>11. Удаление блюда из списка
+    Удаляет указанное блюдо из списка полностью, включая все его порции.>
+>12. Удаление блюда, если его нет в наличии
+Удаляет указанное блюдо из списка, только если его порций больше нет. Если
+порции остались, блюдо помещается в очередь на удаление и будет удалено, как
+только его количество станет равным нулю.
+
+### 2. Входные и выходные данные
+
+### 3. Выбор структуры данных
+
+### 4. Алгоритм
+
+#### Алгоритм выполнения программы. Описание классов программы:
+
+1. **Класс Meal:**  
+   Этот класс содержит блюда. Поля: название, цена и количество порций. Этот класс будет использоваться в классе Canteen. 
+2. **Класс Canteen:**
+   В этом классе описываются методы, которые будут функционалом столовой. Поля: массив из блюд (Meal), n - кол-во блюд в массиве.
+Методы:
+- sortAlphabetical - вспмогательный метод, сортирующий блюда по алфавиту
+- addMeal - добавляет блюдо в меню
+- printMeals - выводит меню
+- printAvailable - выводит доступные блюда (у которых кол-во порций > 0)
+- cooked - увеличивает кол-во порций блюд
+- changePrice - меняет цену блюда, если она больше установленной сейчас
+- buyMeal - покупка блюда по номеру. Если блюдо доступно, выводит цену, иначе -1.
+- buyMeal - покупка блюд по массиву номеров. Если есть доступные блюда, выводит сумму их цен, иначе -1.
+- sortPrices - вспомогательный метод, возвращает новый массив, в котором блюда отсортированны по возрастанию цены
+- amountMeals - возвращает максимальное количество блюд, которые можно купить по заданной цене
+- mostExpensive - выводит 3 самых дорогих блюда с ценами, из доступных
+- mostCheap - выводит 3 самых дешевых блюда с ценами, из доступных
+- deleteMeal - удаляет блюдо по его номеру, вместе со всеми порциями
+- deleteIfEmpty - удаляет блюдо по его номеру, если его кол-во порций = 
+
+
+
+
+
+
+### 5. Программа
+
+```java
+class Meal{ //класс блюдо
+    private String name;
+    private double price;
+    private int portions;
+
+    public Meal(String name, double price) { //конструктор
+        this.name = name;
+        this.price = price;
+        portions = 0;
+
+    }
+    @Override
+    public String toString() {
+        return name+" "+price+"руб "+ portions+"шт";
+    }
+    //геттеры и сеттеры
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public int getPortions() {
+        return portions;
+    }
+
+    public void setPortions(int portions) {
+        this.portions = portions;
+    }
+}
+
+
+class Canteen{ //класс столовая
+    private Meal [] menu; //массив из блюд
+    private int n; //кол-во блюд
+
+
+    public Canteen() { //конструктор
+        menu = new Meal [300];
+        for (int i = 0; i<300; i++){
+            menu[i] = new Meal("empty",0);
+        }
+        n = 0;
+    }
+    
+    public Meal [] sortAlphabetical(){ //сортировка блюд в алфавитном порядке
+        String namex = menu[n].getName();
+        int ind = 0;
+        boolean f = false;
+        for(int i = 0; i<n; i++){ //поиск индекса, на который надо вставить новый элемент
+            if (f)
+                break;
+            String namei = menu[i].getName(); //получаем название блюда с индексом i
+            //если название блюда №i - часть названия добавленного блюдп
+            if(namex.length()>namei.length() && namex.substring(0,namei.length()).equals(namei)){
+                ind = i+1;
+            }
+            else
+                //если название добавленного блюда - часть названия  блюда №i
+            if (namex.length()<=namei.length() && namei.substring(0,namex.length()).equals(namex))
+                ind = i;
+            else {
+                //иначе, когда названия не являются частями друг друга
+                int k = Math.min(namex.length(),namei.length());
+                for (int j = 0; j<k; j++) //ищем на какой букве слова начинают различаться
+                    if (namex.charAt(j)>namei.charAt(j)) 
+                        break;
+                    else
+                    if (namex.charAt(j)<namei.charAt(j)){
+                        ind = i;
+                        f = true;
+                        break;
+                    }
+            }
+        }
+       if (ind==-1) //если не нашли индекс, значит массив уже отсортирован
+          return menu;
+       else
+       {
+          Meal[] menuSorted = new Meal[300]; //menuSorted - новый, отсортированный по алфавиту список блюд
+          for (int i = 0; i < ind; i++)
+             menuSorted[i] = menu[i];
+          menuSorted[ind] = menu[n];
+          menu[n] = menu[n+1];
+          for (int i = ind + 1; i < 300; i++)
+             menuSorted[i] = menu[i - 1];
+
+
+          return menuSorted;
+       }
+
+    }
+
+   public void addMeal(Meal x){ //добавление блюда
+      if (x.getPrice()>0){ //если цена > 0
+         if (menu[0].getName().equals("empty")){ //если меню пустое, то добавляем на первое место 
+            menu[0] = x;
+            n++;
+         }
+         else{ //если список не пустой
+            boolean f = true;
+            for (int i = 0; i<n; i++) //проверяем, есть ли блюдо с таким названием
+               if (menu[i].getName().equals(x.getName())){ //если есть, то не добавляем
+                  f = false;
+                  break;
+               }
+            if (f){ //такого блюда еще нет, добавляем
+               menu[n] = x; //добавляем в конец
+               menu = sortAlphabetical(); //сортируем по алфавиту
+               n++; //увеличиваем длину меню
+            }
+         }
+      }
+   }
+
+    public void printMeals(){ //выводит названия и цены блюд в алфавитном порядке
+        System.out.println("Меню");
+        for (int i = 0; i<n; i++){
+            System.out.printf("%-15s  %7.2f",menu[i].getName(),menu[i].getPrice());
+            System.out.println();
+
+        }
+        System.out.println();
+    }
+
+   public void printAvailable(){ //выводит доступные блюда (те у которых >0 порций)
+      System.out.println("Доступные блюда");
+      for (int i = 0; i<n; i++){
+         //если у блюда не 0 порций
+         if (menu[i].getPortions()!=0) {
+            System.out.printf("%-15s  %7d", menu[i].getName(), menu[i].getPortions());
+            System.out.println();
+         }
+
+      }
+      System.out.println();
+   }
+
+    public void cooked(int n, int k){ //увеличивает кол-во порций блюда n на k
+        menu[n-1].setPortions(menu[n-1].getPortions()+k);
+    }
+
+    public void changePrice(int n, int m){ //меняет цену блюда n на m, если m> актуальной цены
+        if (menu[n-1].getPrice()<m)
+            menu[n-1].setPrice(m);
+    }
+
+    public double buyMeal(int n){ //покупка блюда
+        if (menu[n-1].getPortions()>0){ //если оно доступно
+            menu[n-1].setPortions(menu[n-1].getPortions()-1); //уменьшаем кол-во порций на 1
+            return menu[n-1].getPrice(); //возвращает стоимость
+        }
+        else
+            return -1; //если не доступно возваращает -1
+    }
+
+   public double buyMeal(int [] n){ //покупка блюд по массиву номеров
+      double s = 0;
+      for (int i = 0; i< n.length; i++) { //для каждого номера блюда
+         if (menu[n[i] - 1].getPortions() > 0) { //если блюдо доступно
+            menu[n[i] - 1].setPortions(menu[n[i] - 1].getPortions() - 1);  //уменьшаем кол-во порций на 1
+            s += menu[n[i] - 1].getPrice(); //увеличиваем сумму цен
+         }
+      }
+      if (s>0) //если сумма больше нуля, значит есть доступные блюда, возвращаем s
+         return s;
+      else
+         return -1;
+
+   }
+
+    private Meal [] sortPrices(){ //сортировка по ценам
+        Meal[] a = new Meal[n];//новый массив
+        for (int i = 0; i<n; i++)
+            a[i] = menu[i];
+        Meal z;
+        for (int i = 1; i<n; i++){ //сортировка пузырьком
+            for (int j=0; j<n-i; j++){
+                if (a[i].getPrice()>a[i+1].getPrice()){
+                    z = a[i];
+                    a[i] = a[i+1];
+                    a[i+1] = z;
+                }
+
+            }
+        }
+        return a;
+    }
+
+   public int amountMeals(double sum){ //кол-во блюд которые можно купить на заданную сумму
+      Meal[] a = sortPrices(); // массив с блюдами, отсортированными по возрастанию цены
+      double s = 0;
+      int k = 0;
+      for (int i = 0; i<n; i++){ //в сортированном массиве складываем цены, пока не выйдем за предел
+         if (a[i].getPortions()>0){ //если блюдо доступно
+            s+=a[i].getPrice(); //добавляем к сумме его цену
+            if (s<sum){ //если не вышли за предел
+               k++;} //увеличиваем кол-во блюд которые можно купить
+            else
+               break;
+
+         }
+
+      }
+      return k;
+   }
+
+   public void mostExpensive(){ //выводит 3 самых дорогих доступных блюда
+      System.out.println("Самые дорогие блюда");
+      Meal[] a = sortPrices();
+
+      int k = 0; //кол-во выведенных блюд
+      for (int i =n-1 ; i>=0; i--){
+         if (a[i].getPortions()>0){ //если блюдо доступно, выводим его название и цену
+            System.out.printf("%-15s  %7.2f",a[i].getName(),a[i].getPrice());
+            System.out.println();
+            k++;
+         }
+         if (k==3) //если вывели три блюда
+            break;
+      }
+      System.out.println();
+   }
+
+   public void mostCheap(){  //выводит 3 самых дешевых доступных блюда
+      System.out.println("Самые дешевые блюда");
+      Meal[] a = sortPrices();
+      int k = 0; //кол-во выведенных блюд
+      for (int i =0 ; i<n; i++){
+         if (a[i].getPortions()>0){ //если блюдо доступно, выводим его название и цену
+            System.out.printf("%-15s  %7.2f",a[i].getName(),a[i].getPrice());
+            System.out.println();
+            k++;
+         }
+         if (k==3) //если вывели три блюда
+            break;
+      }
+      System.out.println();
+   }
+
+   public void deleteMeal(int x){ //удаление блюда
+      for (int i = x-1; i<n; i++) //с места x сдвигаем значения на 1 влево
+         menu[i] = menu[i+1];
+      n--; //уменьшаем кол-во блюд в меню
+   }
+
+    public void deleteIfEmpty(int x){ //удаления блюда, если у него 0 порций
+        if (menu[x-1].getPortions()==0){ //если ноль порций
+            for (int i = x-1; i<n; i++) //с места x сдвигаем значения на 1 влево
+                menu[i] = menu[i+1];
+            n--;
+        }
+    }
+}
+```
+
+### 6. Анализ правильности решения
+
+Программа работает корректно. Покажем это на нескольких различных примерах. Создадим несколько блюд, и применим к ним все методы
+
+1. Тест на добавление блюд, и их вывод в алфавитном порядке
+
+        ```
+        Canteen rus = new Canteen();
+        rus.addMeal(new Meal("Meat",400));
+        rus.addMeal(new Meal ("Apple",35));
+        rus.addMeal(new Meal ("Apples",50));
+        rus.addMeal(new Meal ("Yogurt",100));
+        rus.addMeal(new Meal ("Bread",80));
+        rus.addMeal(new Meal("Cookies",90));
+        rus.addMeal(new Meal("Cookies",190));
+        rus.addMeal(new Meal("Water",0));
+        rus.printMeals();
+        ```
+
+    - **Output**:
+        ```
+                    Меню
+         Apple              35,00
+         Apples             50,00
+         Bread              80,00
+         Cookies            90,00
+         Meat              400,00
+         Yogurt            100,00
+        ```
+
+2. Тест на приготовление порций
+
+   ```
+   rus.cooked(2,2);
+   rus.cooked(5,6);
+   rus.cooked(4,4);
+   rus.printAvailable();
+   ```
+   - **Output**:
+   ```
+      Доступные блюда
+      Apples                 2
+      Cookies                4
+      Meat                   6
+
+   ```
+
+
+3. Тест на покупку одного/нескольких блюд
+    
+      ```
+        out.println(rus.buyMeal(2)); //есть в наличии
+        out.println(rus.buyMeal(1)); //нет в наличии
+
+        //покупка нескольких блюд
+        out.println(rus.buyMeal(new int[]{2, 4, 5})); //есть в наличии
+        out.println(rus.buyMeal(new int[]{1,3})); //нет в наличии
+
+
+        rus.printAvailable();
+      ```
+
+    - **Output**:
+        ```
+      50.0
+      -1.0
+
+      540.0
+      -1.0
+      
+      Доступные блюда
+      Cookies                3
+      Meat                   5
+        ```
+
+4. Тест на кол-во доступных по сумме, самые дорогие/дешевые доступные
+
+      ```
+        out.println(rus.amountMeals(50));
+        out.println(rus.amountMeals(150));
+
+
+        rus.cooked(2,2);
+        rus.cooked(3,7);
+
+        //3 самых дорогих из доступных
+        rus.mostExpensive();
+
+        //3 самых дешевых из доступных
+        rus.mostCheap();
+      ```
+
+   - **Output**:
+       ```
+      кол-во блюд из доступных по сумме
+      0
+      1
+      Самые дорогие блюда
+      Meat              400,00
+      Cookies            90,00
+      Bread              80,00
+      
+      Самые дешевые блюда
+      Apples             50,00
+      Bread              80,00
+      Cookies            90,00
+       ```
+
+
+5. Тест на изменение цены
+
+      ```
+        rus.changePrice(2,60); //увеличили цену
+        rus.changePrice(3,50); //уменьшили
+
+        rus.printMeals();
+      ```
+
+   - **Output**:
+       ```
+      Меню
+      Apple              35,00
+      Apples             60,00
+      Bread              80,00
+      Cookies            90,00
+      Meat              400,00
+      Yogurt            100,00
+       ```
+     
+6. Тест на удаление блюд
+
+   ```
+        rus.deleteMeal(2);
+        rus.printMeals();
+
+        //удаляем блюдо, если нет в наличии
+        rus.deleteIfEmpty(1);//нет в наличии
+        rus.deleteIfEmpty(3);//есть в наличии
+        rus.printMeals();
+
+   ```
+   - **Output**:
+       ```
+      Меню
+      Apple              35,00
+      Bread              80,00
+      Cookies            90,00
+      Meat              400,00
+      Yogurt            100,00
+      
+
+      Меню
+      Bread              80,00
+      Cookies            90,00
+      Meat              400,00
+      Yogurt            100,00
+       ```
+   
